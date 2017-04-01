@@ -1,23 +1,21 @@
 CC = ~/embedded_C/buildroot-build/host/usr/bin/i586-buildroot-linux-uclibc-gcc
 
-all: bib.o bibc.o hello.o helloc.o hello cross clean
+all: bib.o bib.so hello.o hello clean
 
 bib.o: bib.c
-	gcc -c -o bib.o bib.c
-bibc.o: bib.c
-	$(CC) -c -o bibc.o bib.c
+	gcc -c -fpic -Werror -Wall -o bib.o bib.c
+
+bib.so: bib.o
+	gcc -shared -o bib.so bib.o
+
 
 hello.o: hello.c bib.o
 	gcc -c -o hello.o hello.c bib.o
 
-helloc.o: hello.c bibc.o
-	$(CC) -c -o helloc.o hello.c bibc.o
-
 hello: bib.o hello.o
 	gcc -o hello bib.o hello.o 
-cross: bib.o hello.o
-	$(CC) -o cross bibc.o helloc.o
+
 clean:
-	rm -f bib.o hello.o bibc.o helloc.o
+	rm -f bib.o hello.o 
 
 
